@@ -13,29 +13,133 @@
 
 import SwiftUI
 
-struct User{
-    var id = ""
-    var isActive = false
-    var name = ""
-    var age = 0
-    var company = ""
-    var email = ""
-    var address = ""
-    var about = ""
-    var registered = Date.now
+
+
+struct User: Codable{
+    enum CodingKeys: CodingKey{
+        case id, isActive, name, age, company, email, address, about, registered,  tags, friends
+    }
+    
+   
+    
+    var id: String
+    var isActive: Bool
+    var name: String
+    var age: Int
+    var company: String
+    var email: String
+    var address: String
+    var about: String
+    var registered: Date
     var tags: [String]
     var friends: [Friend]
+    
+//    func encode(to encoder: Encoder) throws {
+//        var container = encoder.container(keyedBy: CodingKeys.self)
+//    }
+//
+//    init(from decoder: Decoder) throws {
+//        print("user init run")
+//        let container = try decoder.container(keyedBy: CodingKeys.self)
+//        id = try container.decode(String.self, forKey: .id)
+//
+//        isActive = try container.decode(Bool.self, forKey: .isActive)
+//
+//        name = try container.decode(String.self, forKey: .name)
+//
+//        age = try container.decode(Int.self, forKey: .age)
+//
+//        company = try container.decode(String.self, forKey: .company)
+//
+//        email = try container.decode(String.self, forKey: .email)
+//
+//        address = try container.decode(String.self, forKey: .address)
+//
+//        about = try container.decode(String.self, forKey: .about)
+//        registered = try container.decode(Date.self, forKey: .registered)
+//        print("registered \(registered)")
+   //     tags = try container.decode([String].self, forKey: .tags)
+        
+
+    //}
 }
 
-struct Friend{
-    var id = ""
-    var name = ""
+struct Friend: Codable{
+    enum CodingKeys: CodingKey{
+        case id, name
+    }
+    var id: String
+    var name: String
 }
+
+struct detailView: View{
+    let user: User
+    var body: some View{
+        VStack{
+            Text(user.name)
+            Text("Age \(user.age)")
+            Text(user.company)
+            Text(user.email)
+            Text(user.address)
+            Text("About: \(user.about)")
+            
+            List(user.friends, id: \.id){ friend in
+                Text(friend.name)
+            }
+        }
+    }
+}
+
+
 
 struct ContentView: View {
+    
+    func loadData() async{
+        if users.isEmpty {
+            print("Load data started")
+            guard let url = URL(string: "https://www.hackingwithswift.com/samples/friendface.json") else {
+                print("Invalid URL")
+                return
+            }
+            do {
+                print(url)
+                let (data, _) = try await URLSession.shared.data(from: url)
+                print("data \(data)")
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                if let decodedResponse = try? decoder.decode([User].self, from: data){
+                    users = decodedResponse
+                    print("users loaded with [decodedResponse]")
+                }
+            } catch {
+                print("invalid data")
+            }
+        }
+        
+    }
+    
+    @State private var users = [User]()
+    
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        NavigationView{
+            List{
+                ForEach(users, id: \.id){ user in
+                    NavigationLink{
+                        //Put the detail view here
+                        detailView(user: user)
+                    } label: {
+                        HStack{
+                            Text(user.name)
+                            Spacer()
+                            Text(user.isActive ? "🟢" : "🔴")
+                        }
+                    }
+                }
+            }
+            .task {
+                await loadData()
+            }
+        }
     }
 }
 
