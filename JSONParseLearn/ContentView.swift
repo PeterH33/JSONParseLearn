@@ -9,10 +9,13 @@
 //Display a list of users with a little information about them, such as their name and whether they are active right now.
 //Create a detail view shown when a user is tapped, presenting more information about them, including the names of their friends.
 //Before you start your download, check that your User array is empty so that you don’t keep starting the download every time the view is shown.
+//Day 61, put core data to use so that we need only retrieve the data once
 
+
+//Data plan, Pull Data from Web > parse json data and put it into the users @State > Save the changes to data to CoreData (on first run this would be everything, subsequent runs just save changes
 
 import SwiftUI
-
+import CoreData
 
 
 struct User: Codable{
@@ -72,6 +75,7 @@ struct Friend: Codable{
     var name: String
 }
 
+
 struct detailView: View{
     let user: User
     var body: some View{
@@ -95,6 +99,8 @@ struct detailView: View{
 struct ContentView: View {
     
     func loadData() async{
+        
+        //TODO make a network check that lets the app run off the cached data if new data can not be retrieved.
         if users.isEmpty {
             print("Load data started")
             guard let url = URL(string: "https://www.hackingwithswift.com/samples/friendface.json") else {
@@ -118,6 +124,10 @@ struct ContentView: View {
         
     }
     
+    func saveData() async{
+        //check for changes to the data and then save those changes
+    }
+    
     @State private var users = [User]()
     
     var body: some View {
@@ -138,6 +148,10 @@ struct ContentView: View {
             }
             .task {
                 await loadData()
+                await MainActor.run {
+                    //put save code function call here?
+                    
+                }
             }
         }
     }

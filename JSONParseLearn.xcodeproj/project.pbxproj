@@ -11,6 +11,8 @@
 		4C18E1D027C7ED25007ED699 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C18E1CF27C7ED25007ED699 /* ContentView.swift */; };
 		4C18E1D227C7ED25007ED699 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C18E1D127C7ED25007ED699 /* Assets.xcassets */; };
 		4C18E1D527C7ED25007ED699 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C18E1D427C7ED25007ED699 /* Preview Assets.xcassets */; };
+		4C18E1DD27C92AB3007ED699 /* JSONParseLearn.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4C18E1DB27C92AB3007ED699 /* JSONParseLearn.xcdatamodeld */; };
+		4C18E1DF27C93404007ED699 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C18E1DE27C93404007ED699 /* DataController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +21,8 @@
 		4C18E1CF27C7ED25007ED699 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4C18E1D127C7ED25007ED699 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4C18E1D427C7ED25007ED699 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4C18E1DC27C92AB3007ED699 /* JSONParseLearn.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = JSONParseLearn.xcdatamodel; sourceTree = "<group>"; };
+		4C18E1DE27C93404007ED699 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +57,8 @@
 			children = (
 				4C18E1CD27C7ED25007ED699 /* JSONParseLearnApp.swift */,
 				4C18E1CF27C7ED25007ED699 /* ContentView.swift */,
+				4C18E1DE27C93404007ED699 /* DataController.swift */,
+				4C18E1DB27C92AB3007ED699 /* JSONParseLearn.xcdatamodeld */,
 				4C18E1D127C7ED25007ED699 /* Assets.xcassets */,
 				4C18E1D327C7ED25007ED699 /* Preview Content */,
 			);
@@ -138,6 +144,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4C18E1D027C7ED25007ED699 /* ContentView.swift in Sources */,
+				4C18E1DF27C93404007ED699 /* DataController.swift in Sources */,
+				4C18E1DD27C92AB3007ED699 /* JSONParseLearn.xcdatamodeld in Sources */,
 				4C18E1CE27C7ED25007ED699 /* JSONParseLearnApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -341,6 +349,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		4C18E1DB27C92AB3007ED699 /* JSONParseLearn.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				4C18E1DC27C92AB3007ED699 /* JSONParseLearn.xcdatamodel */,
+			);
+			currentVersion = 4C18E1DC27C92AB3007ED699 /* JSONParseLearn.xcdatamodel */;
+			path = JSONParseLearn.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 4C18E1C227C7ED25007ED699 /* Project object */;
 }
