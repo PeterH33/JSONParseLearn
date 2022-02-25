@@ -32,7 +32,7 @@ class DataController: ObservableObject{
                 return
             }
             self.container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-            
+            print("container.loadPersistentStores ran?")
         }
     }
 }

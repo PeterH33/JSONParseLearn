@@ -12,10 +12,11 @@
 //Day 61, put core data to use so that we need only retrieve the data once
 
 
-//Data plan, Pull Data from Web > parse json data and put it into the users @State > Save the changes to data to CoreData (on first run this would be everything, subsequent runs just save changes
+//Data plan, Pull Data from Web (fail check) > parse json data and put it into the users @State > Save the changes to data to CoreData (on first run this would be everything, subsequent runs just save changes)
+//If *fail check* , load information into users @State from CoreData and run that way.
 
 import SwiftUI
-import CoreData
+//import CoreData
 
 
 struct User: Codable{
@@ -128,29 +129,59 @@ struct ContentView: View {
         //check for changes to the data and then save those changes
     }
     
+    func networkFailLoadData(){
+        //Fetch data from core data and load it into users
+        //provide default data to core data that is a note saying, hey network failed and nothing is cached... need to find how to purge the data to check this process, I could add a button to clear data perhaps?
+    }
+    
+    @Environment(\.managedObjectContext) var moc
     @State private var users = [User]()
     
+    @FetchRequest(sortDescriptors: []) var cachedUser: FetchedResults<CachedUser>
+
+
     var body: some View {
         NavigationView{
             List{
-                ForEach(users, id: \.id){ user in
-                    NavigationLink{
-                        //Put the detail view here
-                        detailView(user: user)
-                    } label: {
-                        HStack{
-                            Text(user.name)
-                            Spacer()
-                            Text(user.isActive ? "🟢" : "🔴")
+                Button("Add user"){
+                    let newUser = CachedUser(context: moc)
+                    newUser.id = "\(Int.random(in: 0...1300))"
+                    newUser.isActive = false
+                    newUser.name = "Hi!"
+                    newUser.age = 14
+                    newUser.company = "Company"
+                    newUser.email = "Boring@frog.email"
+                    newUser.address = "A place address"
+                    newUser.about = "Lorem te ipsum froggy pants"
+                    newUser.registered = Date.now
+                    
+                    try? moc.save()
+                    
+                }
+                Section(header:
+                            Text("cachedUser count: \(cachedUser.count)")
+                           
+                ){
+                    ForEach(users, id: \.id){ user in
+                        NavigationLink{
+                            //Put the detail view here
+                            detailView(user: user)
+                        } label: {
+                            HStack{
+                                Text(user.name)
+                                Spacer()
+                                Text(user.isActive ? "🟢" : "🔴")
+                            }
                         }
                     }
-                }
-            }
-            .task {
-                await loadData()
-                await MainActor.run {
-                    //put save code function call here?
                     
+                }
+                .task {
+                    await loadData()
+                    await MainActor.run {
+                        //put save code function call here?
+                        
+                    }
                 }
             }
         }
