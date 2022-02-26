@@ -2,6 +2,13 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21D62" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CachedFriend" representedClassName="CachedFriend" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="user" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CachedUser" inverseName="friends" inverseEntity="CachedUser"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <entity name="CachedUser" representedClassName="CachedUser" syncable="YES" codeGenerationType="class">
         <attribute name="about" optional="YES" attributeType="String"/>
@@ -13,6 +20,8 @@
         <attribute name="isActive" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="registered" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="tags" optional="YES" attributeType="String"/>
+        <relationship name="friends" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CachedFriend" inverseName="user" inverseEntity="CachedFriend"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
@@ -20,7 +29,7 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="CachedUser" positionX="-27" positionY="18" width="128" height="164"/>
-        <element name="CachedFriend" positionX="-27" positionY="27" width="128" height="44"/>
+        <element name="CachedUser" positionX="-27" positionY="18" width="128" height="194"/>
+        <element name="CachedFriend" positionX="-27" positionY="27" width="128" height="74"/>
     </elements>
 </model>

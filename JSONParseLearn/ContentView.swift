@@ -24,8 +24,6 @@ struct User: Codable{
         case id, isActive, name, age, company, email, address, about, registered,  tags, friends
     }
     
-   
-    
     var id: String
     var isActive: Bool
     var name: String
@@ -37,35 +35,6 @@ struct User: Codable{
     var registered: Date
     var tags: [String]
     var friends: [Friend]
-    
-//    func encode(to encoder: Encoder) throws {
-//        var container = encoder.container(keyedBy: CodingKeys.self)
-//    }
-//
-//    init(from decoder: Decoder) throws {
-//        print("user init run")
-//        let container = try decoder.container(keyedBy: CodingKeys.self)
-//        id = try container.decode(String.self, forKey: .id)
-//
-//        isActive = try container.decode(Bool.self, forKey: .isActive)
-//
-//        name = try container.decode(String.self, forKey: .name)
-//
-//        age = try container.decode(Int.self, forKey: .age)
-//
-//        company = try container.decode(String.self, forKey: .company)
-//
-//        email = try container.decode(String.self, forKey: .email)
-//
-//        address = try container.decode(String.self, forKey: .address)
-//
-//        about = try container.decode(String.self, forKey: .about)
-//        registered = try container.decode(Date.self, forKey: .registered)
-//        print("registered \(registered)")
-   //     tags = try container.decode([String].self, forKey: .tags)
-        
-
-    //}
 }
 
 struct Friend: Codable{
@@ -125,8 +94,36 @@ struct ContentView: View {
         
     }
     
-    func saveData() async{
+    func saveUsersToCoreData() {
         //check for changes to the data and then save those changes
+        for user in users{
+            let newUser = CachedUser(context: moc)
+            newUser.id = user.id
+            newUser.isActive = user.isActive
+            newUser.name = user.name
+            newUser.age = Int16(user.age)
+            newUser.company = user.company
+            newUser.email = user.email
+            newUser.address = user.address
+            newUser.about = user.about
+            newUser.registered = user.registered
+            newUser.tags = user.tags.joined(separator: ",")
+            for friend in user.friends {
+                let newFriend = CachedFriend(context: moc)
+                newFriend.id = friend.id
+                newFriend.name = friend.name
+            }
+            
+            try? moc.save()
+        }
+        
+//        let newFriend = CachedFriend(context: moc)
+//        newFriend.id = "\(Int.random(in: 0...1300))"
+//        newFriend.name = "Bob"
+//        let newTage = CachedTag(context: moc)
+//        newTage.name = "Word"
+        
+        
     }
     
     func networkFailLoadData(){
@@ -138,11 +135,28 @@ struct ContentView: View {
     @State private var users = [User]()
     
     @FetchRequest(sortDescriptors: []) var cachedUser: FetchedResults<CachedUser>
-
-
+    @FetchRequest(sortDescriptors: []) var cachedFriend: FetchedResults<CachedFriend>
+  //  @FetchRequest(sortDescriptors: []) var cachedTag: FetchedResults<CachedTag>
+    
     var body: some View {
         NavigationView{
             List{
+                Button("Purge data"){
+                    for item in cachedUser {
+                        moc.delete(item)
+                        try? moc.save()
+                    }
+//                    for item in cachedTag {
+//                        moc.delete(item)
+//                        try? moc.save()
+//                    }
+                    for item in cachedFriend {
+                        moc.delete(item)
+                        try? moc.save()
+                    }
+                    
+                    
+                }
                 Button("Add user"){
                     let newUser = CachedUser(context: moc)
                     newUser.id = "\(Int.random(in: 0...1300))"
@@ -154,33 +168,48 @@ struct ContentView: View {
                     newUser.address = "A place address"
                     newUser.about = "Lorem te ipsum froggy pants"
                     newUser.registered = Date.now
+                    let newFriend = CachedFriend(context: moc)
+                    newFriend.id = "\(Int.random(in: 0...1300))"
+                    newFriend.name = "Bob"
+           
                     
                     try? moc.save()
                     
                 }
                 Section(header:
-                            Text("cachedUser count: \(cachedUser.count)")
-                           
+                            VStack(alignment: .leading){
+                    Text("cachedUser count: \(cachedUser.count)")
+                    Text("cachedFriend count: \(cachedFriend.count)")
+           //         Text("cachedTag count: \(cachedTag.count)")
+                }
                 ){
-                    ForEach(users, id: \.id){ user in
+//                    ForEach(users, id: \.id){ user in
+//                        NavigationLink{
+//                            //Put the detail view here
+//                            detailView(user: user)
+//                        } label: {
+//                            HStack{
+//                                Text(user.name)
+//                                Spacer()
+//                                Text(user.isActive ? "🟢" : "🔴")
+//                            }
+//                        }
+//                    }
+                    ForEach(cachedUser){ user in
                         NavigationLink{
-                            //Put the detail view here
-                            detailView(user: user)
+                            
                         } label: {
-                            HStack{
-                                Text(user.name)
-                                Spacer()
-                                Text(user.isActive ? "🟢" : "🔴")
-                            }
+                            Text(user.name ?? "Unknown Name")
                         }
                     }
+                    
                     
                 }
                 .task {
                     await loadData()
                     await MainActor.run {
                         //put save code function call here?
-                        
+                        saveUsersToCoreData()
                     }
                 }
             }
