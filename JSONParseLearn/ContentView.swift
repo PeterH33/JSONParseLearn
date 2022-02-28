@@ -9,11 +9,10 @@
 //Display a list of users with a little information about them, such as their name and whether they are active right now.
 //Create a detail view shown when a user is tapped, presenting more information about them, including the names of their friends.
 //Before you start your download, check that your User array is empty so that you don’t keep starting the download every time the view is shown.
+
 //Day 61, put core data to use so that we need only retrieve the data once
 
 
-//Data plan, Pull Data from Web (fail check) > parse json data and put it into the users @State > Save the changes to data to CoreData (on first run this would be everything, subsequent runs just save changes)
-//If *fail check* , load information into users @State from CoreData and run that way.
 
 import SwiftUI
 //import CoreData
@@ -37,7 +36,7 @@ struct User: Codable{
     var friends: [Friend]
 }
 
-struct Friend: Codable{
+struct Friend: Codable, Hashable{
     enum CodingKeys: CodingKey{
         case id, name
     }
@@ -47,18 +46,26 @@ struct Friend: Codable{
 
 
 struct detailView: View{
-    let user: User
+    @Environment(\.managedObjectContext) var moc
+    let user: CachedUser
+    
+    
     var body: some View{
         VStack{
-            Text(user.name)
+            Text(user.name ?? "Unknown")
             Text("Age \(user.age)")
-            Text(user.company)
-            Text(user.email)
-            Text(user.address)
-            Text("About: \(user.about)")
+            Text(user.company ?? "Unknown")
+            Text(user.email ?? "Unknown")
+            Text(user.address ?? "Unknown")
+            Text(user.about ?? "Unknown")
+            //TODO Clean up the formatting for the details page, and make the tags and friends funtional
+            //TODO the code for the tags is not very helpful, nor searchable. It would be nice to be able to filter information by tags, using the filteredList Struct from the core data project seems like a solid idea.
+            Text("Tags: \(user.tags ?? "Bawk!")")
             
-            List(user.friends, id: \.id){ friend in
-                Text(friend.name)
+            List{
+//                ForEach(){friend in
+//                    
+//                }
             }
         }
     }
@@ -70,7 +77,6 @@ struct ContentView: View {
     
     func loadData() async{
         
-        //TODO make a network check that lets the app run off the cached data if new data can not be retrieved.
         if users.isEmpty {
             print("Load data started")
             guard let url = URL(string: "https://www.hackingwithswift.com/samples/friendface.json") else {
@@ -136,7 +142,7 @@ struct ContentView: View {
     
     @FetchRequest(sortDescriptors: []) var cachedUser: FetchedResults<CachedUser>
     @FetchRequest(sortDescriptors: []) var cachedFriend: FetchedResults<CachedFriend>
-  //  @FetchRequest(sortDescriptors: []) var cachedTag: FetchedResults<CachedTag>
+ 
     
     var body: some View {
         NavigationView{
@@ -180,26 +186,19 @@ struct ContentView: View {
                             VStack(alignment: .leading){
                     Text("cachedUser count: \(cachedUser.count)")
                     Text("cachedFriend count: \(cachedFriend.count)")
-           //         Text("cachedTag count: \(cachedTag.count)")
+      
                 }
                 ){
-//                    ForEach(users, id: \.id){ user in
-//                        NavigationLink{
-//                            //Put the detail view here
-//                            detailView(user: user)
-//                        } label: {
-//                            HStack{
-//                                Text(user.name)
-//                                Spacer()
-//                                Text(user.isActive ? "🟢" : "🔴")
-//                            }
-//                        }
-//                    }
+
                     ForEach(cachedUser){ user in
                         NavigationLink{
-                            
+                            detailView(user: user)
                         } label: {
-                            Text(user.name ?? "Unknown Name")
+                            HStack{
+                                Text(user.name ?? "Unknown Name")
+                                Spacer()
+                                Text(user.isActive ? "🟢" : "🔴")
+                            }
                         }
                     }
                     
@@ -208,7 +207,7 @@ struct ContentView: View {
                 .task {
                     await loadData()
                     await MainActor.run {
-                        //put save code function call here?
+                      
                         saveUsersToCoreData()
                     }
                 }
@@ -217,8 +216,10 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
+
+//No preview mode for this one, crashes too much to really be helpful
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContentView()
+//    }
+//}
