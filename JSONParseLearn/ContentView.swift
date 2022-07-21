@@ -58,7 +58,7 @@ struct detailView: View{
             Text(user.email ?? "Unknown")
             Text(user.address ?? "Unknown")
             Text(user.about ?? "Unknown")
-            //TODO Clean up the formatting for the details page, and make the tags and friends funtional
+            //TODO Clean up the formatting for the details page, and make the tags and friends functional
             //TODO the code for the tags is not very helpful, nor searchable. It would be nice to be able to filter information by tags, using the filteredList Struct from the core data project seems like a solid idea.
             Text("Tags: \(user.tags ?? "Bawk!")")
             
@@ -126,8 +126,8 @@ struct ContentView: View {
 //        let newFriend = CachedFriend(context: moc)
 //        newFriend.id = "\(Int.random(in: 0...1300))"
 //        newFriend.name = "Bob"
-//        let newTage = CachedTag(context: moc)
-//        newTage.name = "Word"
+//        let newTags = CachedTag(context: moc)
+//        newTags.name = "Word"
         
         
     }
